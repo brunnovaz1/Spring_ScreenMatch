@@ -7,6 +7,7 @@ import br.com.alura.screenmatch.model.Episodio;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConverteDados;
 
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -69,21 +70,22 @@ public class Principal {
                 .map(dadosEpisodio -> new Episodio(t.numero(), dadosEpisodio))
                 ).collect(Collectors.toList());
 
-        episodios.forEach(System.out::println);
+ //       episodios.forEach(System.out::println);
 
-        System.out.println(" - - - - - - - - - - - - - - - -");
-        System.out.print("Busca pelo título: ");
+   /*     System.out.println(" - - - - - - - - - - - - - - - -");
+        System.out.print("Episódio: ");
         String trechoTitulo = scan.nextLine();
         Optional<Episodio> episodioBuscado = episodios.stream()
                 .filter(episodio -> episodio.getTitulo().toUpperCase().contains(trechoTitulo.toUpperCase()))
                 .findFirst();
         if(episodioBuscado.isPresent()){
-            System.out.println("Temporada: " + episodioBuscado.get().getTemporada() +
-            " - Episódio: " + episodioBuscado.get().getNumero());
+            System.out.println( "Temporada: " + episodioBuscado.get().getTemporada() +
+                                " - Episódio: " + episodioBuscado.get().getNumero()
+            );
         } else {
-            System.out.println("Episódio não encontrado");
+            System.out.println("Espisódio não encontrado!");
         }
-
+*/
 
  /*     System.out.println("A partir de que ano você quer os espisodios?");
         int ano = scan.nextInt();
@@ -98,5 +100,19 @@ public class Principal {
                         " - Data Lançamento: " + episodio.getDataLancamento().format(formatador)
                 ));
 */
+        Map<Integer, Double> avaliacoesPorTemporada = episodios.stream()
+                .filter(episodio -> episodio.getAvaliacao() > 0.0)
+                .collect(Collectors.groupingBy(Episodio::getTemporada,            //coleta: agrupa episodios por temporada
+                        Collectors.averagingDouble(Episodio::getAvaliacao)));  // calcula a media tipo Double
+ //       System.out.println(avaliacoesPorTemporada);
+
+        DoubleSummaryStatistics est = episodios.stream()
+                .filter(episodio -> episodio.getAvaliacao() > 0)
+                .collect(Collectors.summarizingDouble(Episodio::getAvaliacao));
+        System.out.println(
+                "Média: " + est.getAverage() +
+                "\nMaior Nota: " + est.getMax() +
+                "\nMenor Nota: " + est.getMin()
+        );
     }
 }
