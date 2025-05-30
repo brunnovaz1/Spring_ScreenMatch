@@ -9,6 +9,7 @@ import java.util.List;
 public record DadosTemporada(@JsonAlias("Season") int numero,
                              @JsonAlias("Episodes") List<DadosEpisodios> episodios
                              ) {
+
     @Override
     public String toString() {
         return "DadosTemporada" +
