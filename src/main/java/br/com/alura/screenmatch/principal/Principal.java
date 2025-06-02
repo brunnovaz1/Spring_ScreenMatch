@@ -9,6 +9,8 @@ import br.com.alura.screenmatch.service.ConverteDados;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -42,7 +44,7 @@ public class Principal {
             DadosTemporada dadosTemporada = conversor.obterDados(json, DadosTemporada.class);
             temporadas.add(dadosTemporada);
         }
-   //     temporadas.forEach(System.out::println);
+    //    temporadas.forEach(System.out::println);
 
    //    temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));    //percorre a coleção, em cada temporada "t" percorre todos seus episodios, agora dentro deles, imprime o titulo
 
@@ -60,13 +62,28 @@ public class Principal {
                 .sorted(Comparator.comparing(Episodio::getAvaliacao).reversed())
                 .limit(5)
                 .collect(Collectors.toList());
-        System.out.println("\n                                  +++++ TOP-5 +++++");
-        top5.forEach(System.out::println);
+        //System.out.println("\n                                  +++++ TOP-5 +++++");
+        //top5.forEach(System.out::println);
 
+        System.out.println("--==-- Busca Episódio por data --==--");
+        System.out.print("Ano: ");
+        int ano = scan.nextInt();
+        scan.nextLine();
 
+        LocalDate dataBusca = LocalDate.of(ano, 1, 1);
 
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-
-
+        episodios.stream()
+                .filter(e -> e.getDataLancamento() != null && e.getDataLancamento().isAfter(dataBusca))
+                .forEach(e -> {
+                    String linha = String.format(
+                            "Temporada: %d - Episódio: %2d - Data: %s",
+                            e.getTemporada(),
+                            e.getNumero(),
+                            e.getDataLancamento().format(formatador)
+                    );
+                    System.out.println(linha);
+                });
     }
 }
